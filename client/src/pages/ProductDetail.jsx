@@ -47,6 +47,16 @@ const ProductDetail = () => {
     const [reviewText, setReviewText] = useState('');
     const [showReviewForm, setShowReviewForm] = useState(false);
 
+    // Keyboard navigation (Must be before any early returns)
+    useEffect(() => {
+        const handleKey = (e) => {
+            if (e.key === 'ArrowLeft') switchImage((selectedImage - 1 + allImages.length) % allImages.length);
+            if (e.key === 'ArrowRight') switchImage((selectedImage + 1) % allImages.length);
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [selectedImage, allImages.length, switchImage]);
+
     if (isLoading) return <Loader />;
     if (!product) return <div className="container section"><h2>Product not found</h2></div>;
 
@@ -79,20 +89,12 @@ const ProductDetail = () => {
         } catch (err) { toast.error(err?.data?.message || 'Error'); }
     };
 
-    const discount = product.compareAtPrice > product.price
-        ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100) : 0;
+    const calcAppPrice = product.compareAtPrice || 0;
+    const calcPrice = product.price || 0;
+    const discount = calcAppPrice > calcPrice
+        ? Math.round(((calcAppPrice - calcPrice) / calcAppPrice) * 100) : 0;
 
     const reviews = reviewsData?.reviews || [];
-
-    // Keyboard navigation
-    useEffect(() => {
-        const handleKey = (e) => {
-            if (e.key === 'ArrowLeft') switchImage((selectedImage - 1 + allImages.length) % allImages.length);
-            if (e.key === 'ArrowRight') switchImage((selectedImage + 1) % allImages.length);
-        };
-        window.addEventListener('keydown', handleKey);
-        return () => window.removeEventListener('keydown', handleKey);
-    }, [selectedImage, allImages.length, switchImage]);
 
     return (
         <div className="pdp section">
@@ -166,9 +168,9 @@ const ProductDetail = () => {
                         </div>
 
                         <div className="pdp__price-row">
-                            <span className="pdp__price">${product.price.toFixed(2)}</span>
-                            {product.compareAtPrice > product.price && (
-                                <span className="pdp__compare">${product.compareAtPrice.toFixed(2)}</span>
+                            <span className="pdp__price">${(product.price || 0).toFixed(2)}</span>
+                            {product.compareAtPrice > (product.price || 0) && (
+                                <span className="pdp__compare">${(product.compareAtPrice || 0).toFixed(2)}</span>
                             )}
                             {discount > 0 && <span className="pdp__save">Save {discount}%</span>}
                         </div>
@@ -176,11 +178,11 @@ const ProductDetail = () => {
                         <p className="pdp__description">{product.description}</p>
 
                         {/* Variants */}
-                        {product.variants?.map((variant) => (
+                        {(product.variants || []).map((variant) => (
                             <div key={variant.name} className="pdp__variant">
                                 <h4>{variant.name}</h4>
                                 <div className="pdp__variant-options">
-                                    {variant.options.map((opt) => (
+                                    {(variant.options || []).map((opt) => (
                                         <button key={opt.value}
                                             className={`pdp__variant-btn ${selectedVariants[variant.name] === opt.value ? 'pdp__variant-btn--active' : ''}`}
                                             onClick={() => setSelectedVariants(prev => ({ ...prev, [variant.name]: opt.value }))}>

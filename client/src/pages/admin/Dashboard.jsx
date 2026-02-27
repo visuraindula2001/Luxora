@@ -422,9 +422,13 @@ const ProductsTab = () => {
     };
 
     const handleDelete = async () => {
-        await deleteProduct(modal.delete._id).unwrap();
-        toast.success('Product deleted');
-        setModal(null);
+        try {
+            await deleteProduct(modal.delete._id).unwrap();
+            toast.success('Product deleted');
+            setModal(null);
+        } catch (err) {
+            toast.error(err?.data?.message || err?.message || 'Failed to delete product');
+        }
     };
 
     if (isLoading) return <Loader />;

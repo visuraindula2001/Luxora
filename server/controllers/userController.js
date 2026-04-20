@@ -85,3 +85,46 @@ exports.deleteUser = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Update user role (admin only)
+// @route   PUT /api/users/:id/role
+exports.updateUserRole = async (req, res, next) => {
+    try {
+        const { role } = req.body;
+
+        if (!['user', 'admin'].includes(role)) {
+            return res.status(400).json({ message: 'Invalid role. Must be "user" or "admin"' });
+        }
+
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Prevent users from downgrading themselves
+        if (req.user._id.toString() === req.params.id && role === 'user') {
+            return res.status(400).json({ message: 'Cannot downgrade your own admin role' });
+        }
+
+        user.role = role;
+        await user.save();
+
+        res.json({ message: `User role updated to ${role}`, user });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get user by ID (admin)
+// @route   GET /api/users/:id
+exports.getUserById = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        next(error);
+    }
+};

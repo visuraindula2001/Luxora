@@ -73,7 +73,7 @@ const Register = () => {
 
                 <div className="auth-divider"><span>or continue with</span></div>
 
-                <a href={`${window.location.origin}/api/auth/google`} className="btn btn-secondary btn-lg auth-google">
+                <a href="/api/auth/google" className="btn btn-secondary btn-lg auth-google">
                     <FcGoogle /> Google
                 </a>
 

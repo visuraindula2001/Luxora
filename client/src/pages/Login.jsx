@@ -63,7 +63,7 @@ const Login = () => {
 
                 <div className="auth-divider"><span>or continue with</span></div>
 
-                <a href="http://localhost:5000/api/auth/google" className="btn btn-secondary btn-lg auth-google">
+                <a href="/api/auth/google" className="btn btn-secondary btn-lg auth-google">
                     <FcGoogle /> Google
                 </a>
 

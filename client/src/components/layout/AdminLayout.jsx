@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/auth/authSlice';
-import { FiMenu, FiX, FiLogOut, FiUsers, FiBox, FiBarChart3, FiHome } from 'react-icons/fi';
+import { FiMenu, FiX, FiLogOut, FiUsers, FiBox, FiBarChart2, FiHome } from 'react-icons/fi';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
@@ -32,7 +32,7 @@ const AdminLayout = () => {
 
                 <nav className="admin-nav">
                     <Link to="/admin" className="admin-nav-item">
-                        <FiBarChart3 /> Dashboard
+                        <FiBarChart2 /> Dashboard
                     </Link>
                     <Link to="/admin/users" className="admin-nav-item">
                         <FiUsers /> Users Management
